@@ -16,7 +16,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, TeamViewSet, ActivityViewSet, WorkoutViewSet, LeaderboardViewSet, api_root
+
+from .views import UserViewSet, TeamViewSet, ActivityViewSet, WorkoutViewSet, LeaderboardViewSet
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+import os
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    # Use the request host for the base URL
+    base_url = f"{request.scheme}://{request.get_host()}"
+    return Response({
+        'users': base_url + reverse('user-list'),
+        'teams': base_url + reverse('team-list'),
+        'activities': base_url + reverse('activity-list'),
+        'workouts': base_url + reverse('workout-list'),
+        'leaderboard': base_url + reverse('leaderboard-list'),
+    })
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
